@@ -1,9 +1,18 @@
 import { Router } from 'express';
 import { uuid } from 'uuidv4';
+import { startOfHour, parseISO, isEqual } from 'date-fns';
 
 const appointmentsRouter = Router();
 
-const appointments = [];
+interface Appointment {
+  id: string;
+  provider: string;
+  date: Date;
+}
+
+// This is telling that the type of appointments is an array of the interface
+// Appointment
+const appointments: Appointment[] = [];
 
 // Because on index.ts we have a route /appointments, which call this very
 // Router() object here. Here, because the route is just /appointments, it
@@ -11,10 +20,23 @@ const appointments = [];
 appointmentsRouter.post('/', (request, response) => {
   const { provider, date } = request.body;
 
+  // Convert the provided date and fix it to only hours
+  const parsedDate = startOfHour(parseISO(date));
+
+  const findAppointmentInSameDate = appointments.find(appointment =>
+    isEqual(parsedDate, appointment.date),
+  );
+
+  if (findAppointmentInSameDate) {
+    return response
+      .status(400)
+      .json({ message: 'This appointment is already booked' });
+  }
+
   const appointment = {
     id: uuid(),
     provider,
-    date,
+    date: parsedDate,
   };
 
   appointments.push(appointment);
