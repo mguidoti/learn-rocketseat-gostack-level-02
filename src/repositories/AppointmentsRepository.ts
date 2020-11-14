@@ -27,6 +27,11 @@ class AppointmentsRepository {
 
     return findAppointment || null;
   }
+
+  public all(): Appointment[] {
+    return this.appointments;
+  }
+
 }
 
 export default AppointmentsRepository;
