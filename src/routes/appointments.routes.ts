@@ -1,10 +1,13 @@
 import { Router } from 'express';
 // import { uuid } from 'uuidv4';
 // import { startOfHour, parseISO, isEqual } from 'date-fns';
-import { startOfHour, parseISO } from 'date-fns';
+// import { startOfHour, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 // import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
+
+import CreateAppointmentService from '../services/CreateAppointmentService';
 
 const appointmentsRouter = Router();
 
@@ -24,24 +27,45 @@ const appointmentsRepository = new AppointmentsRepository();
 // Router() object here. Here, because the route is just /appointments, it
 // is redirect to the root route
 appointmentsRouter.post('/', (request, response) => {
-  const { provider, date } = request.body;
+  try {
+    const { provider, date } = request.body;
 
-  // Convert the provided date and fix it to only hours
-  const parsedDate = startOfHour(parseISO(date));
+    // Convert the provided date and fix it to only hours
+    // This is part of the 'Regra de Negocio'. Splitting parseISO from startOfHour
+    // is, therefore, necessary to have the services right
+    // const parsedDate = startOfHour(parse(date));
+    const parsedDate = parseISO(date);
 
-  const findAppointmentInSameDate = appointmentsRepository.findByDate(
-    parsedDate,
-  );
+    const createAppointment = new CreateAppointmentService(
+      appointmentsRepository,
+    );
 
-  if (findAppointmentInSameDate) {
-    return response
-      .status(400)
-      .json({ message: 'This appointment is already booked' });
+    // const appointmentDate = startOfHour(parsedDate);
+
+    // const findAppointmentInSameDate = appointmentsRepository.findByDate(
+    //   parsedDate,
+    // );
+
+    // if (findAppointmentInSameDate) {
+    //   return response
+    //     .status(400)
+    //     .json({ message: 'This appointment is already booked' });
+    // }
+
+    // const appointment = appointmentsRepository.create({
+    //   provider,
+    //   date: parsedDate,
+    // });
+
+    const appointment = createAppointment.execute({
+      date: parsedDate,
+      provider,
+    });
+
+    return response.json(appointment);
+  } catch (err) {
+    return response.status(400).json({ message: err.message });
   }
-
-  const appointment = appointmentsRepository.create(provider, parsedDate);
-
-  return response.json(appointment);
 });
 
 appointmentsRouter.get('/', (request, response) => {

@@ -2,6 +2,11 @@ import { isEqual } from 'date-fns';
 
 import Appointment from '../models/Appointment';
 
+interface CreateAppointmentDTO {
+  provider: string;
+  date: Date;
+}
+
 class AppointmentsRepository {
   // This variable isn't accessible outside the class, that's why the 'private'
   private appointments: Appointment[];
@@ -11,8 +16,8 @@ class AppointmentsRepository {
   }
 
   // The : Appointment is indicating that the return type will be Appointment
-  public create(provider: string, date: Date): Appointment {
-    const appointment = new Appointment(provider, date);
+  public create({ provider, date }: CreateAppointmentDTO): Appointment {
+    const appointment = new Appointment({ provider, date });
 
     this.appointments.push(appointment);
 
@@ -31,7 +36,6 @@ class AppointmentsRepository {
   public all(): Appointment[] {
     return this.appointments;
   }
-
 }
 
 export default AppointmentsRepository;
