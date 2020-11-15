@@ -6,12 +6,13 @@ import { parseISO } from 'date-fns';
 
 // import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
-
 import CreateAppointmentService from '../services/CreateAppointmentService';
+
+import { getCustomRepository } from 'typeorm';
 
 const appointmentsRouter = Router();
 
-const appointmentsRepository = new AppointmentsRepository();
+// const appointmentsRepository = new AppointmentsRepository();
 
 // interface Appointment {
 //   id: string;
@@ -26,7 +27,7 @@ const appointmentsRepository = new AppointmentsRepository();
 // Because on index.ts we have a route /appointments, which call this very
 // Router() object here. Here, because the route is just /appointments, it
 // is redirect to the root route
-appointmentsRouter.post('/', (request, response) => {
+appointmentsRouter.post('/', async (request, response) => {
   try {
     const { provider, date } = request.body;
 
@@ -36,9 +37,7 @@ appointmentsRouter.post('/', (request, response) => {
     // const parsedDate = startOfHour(parse(date));
     const parsedDate = parseISO(date);
 
-    const createAppointment = new CreateAppointmentService(
-      appointmentsRepository,
-    );
+    const createAppointment = new CreateAppointmentService();
 
     // const appointmentDate = startOfHour(parsedDate);
 
@@ -57,7 +56,7 @@ appointmentsRouter.post('/', (request, response) => {
     //   date: parsedDate,
     // });
 
-    const appointment = createAppointment.execute({
+    const appointment = await createAppointment.execute({
       date: parsedDate,
       provider,
     });
@@ -68,8 +67,11 @@ appointmentsRouter.post('/', (request, response) => {
   }
 });
 
-appointmentsRouter.get('/', (request, response) => {
-  const appointments = appointmentsRepository.all();
+appointmentsRouter.get('/', async (request, response) => {
+  const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+  //const appointments = appointmentsRepository.all();
+  const appointments = await appointmentsRepository.find();
 
   return response.json(appointments);
 });
