@@ -1,7 +1,7 @@
 // import { isEqual } from 'date-fns';
-import Appointment from '../models/Appointment';
-
 import { EntityRepository, Repository } from 'typeorm';
+
+import Appointment from '../models/Appointment';
 
 // interface CreateAppointmentDTO {
 //   provider: string;
@@ -42,8 +42,6 @@ class AppointmentsRepository extends Repository<Appointment> {
   // public all(): Appointment[] {
   //   return this.appointments;
   // }
-
-
 }
 
 export default AppointmentsRepository;
