@@ -1,24 +1,31 @@
-import { query } from "express";
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from "typeorm";
+import { query } from 'express';
+import {
+  MigrationInterface,
+  QueryRunner,
+  TableColumn,
+  TableForeignKey,
+} from 'typeorm';
 
-export default class AlterProviderFieldToProviderId1605481735302 implements MigrationInterface {
+export default class AlterProviderFieldToProviderId1605481735302
+  implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropColumn('appointments', 'provider');
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.dropColumn('appointments', 'provider');
+    await queryRunner.addColumn(
+      'appointments',
+      new TableColumn({
+        name: 'providerId',
+        type: 'uuid',
+        isNullable: true,
+        // default: 'uuid_generate_v4()'
+      }),
+    );
 
-      await queryRunner.addColumn(
-        'appointments',
-        new TableColumn({
-          name: 'provider_id',
-          type: 'uuid',
-          isNullable: true,
-          // default: 'uuid_generate_v4()'
-        })
-      );
-
-      await queryRunner.createForeignKey('appointments', new TableForeignKey({
+    await queryRunner.createForeignKey(
+      'appointments',
+      new TableForeignKey({
         name: 'AppointmentProvider',
-        columnNames: ['provider_id'],
+        columnNames: ['providerId'],
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         // When delete, all of the appointments associated with this user will
@@ -28,19 +35,22 @@ export default class AlterProviderFieldToProviderId1605481735302 implements Migr
         // onDelete: 'RESTRICT',
         // Set as null
         onDelete: 'SET NULL',
-        onUpdate: 'CASCADE'
-      }),);
-    }
+        onUpdate: 'CASCADE',
+      }),
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.dropForeignKey('appointments', 'AppointmentProvider');
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropForeignKey('appointments', 'AppointmentProvider');
 
-      await queryRunner.dropColumn('appointments', 'provider_id');
+    await queryRunner.dropColumn('appointments', 'providerId');
 
-      await queryRunner.addColumn('appointments', new TableColumn({
-          name: 'provider',
-          type: 'varchar',
-      }))
-    }
-
+    await queryRunner.addColumn(
+      'appointments',
+      new TableColumn({
+        name: 'provider',
+        type: 'varchar',
+      }),
+    );
+  }
 }

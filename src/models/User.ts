@@ -1,9 +1,14 @@
 // import { uuid } from 'uuidv4';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('users')
 class User {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,11 +22,10 @@ class User {
   password: string;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
-
+  updatedAt: Date;
 }
 
 export default User;

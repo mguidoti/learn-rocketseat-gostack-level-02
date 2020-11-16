@@ -5,7 +5,7 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import { getCustomRepository } from 'typeorm';
 
 interface RequestDTO {
-  provider: string;
+  providerId: string;
   date: Date;
 }
 
@@ -16,7 +16,7 @@ class CreateAppointmentService {
   //   this.appointmentsRepository = appointmentsRepository;
   // }
 
-  public async execute({ date, provider }: RequestDTO): Promise<Appointment> {
+  public async execute({ date, providerId }: RequestDTO): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
     const appointmentDate = startOfHour(date);
@@ -30,7 +30,7 @@ class CreateAppointmentService {
     }
 
     const appointment = appointmentsRepository.create({
-      provider,
+      providerId,
       date: appointmentDate,
     });
 

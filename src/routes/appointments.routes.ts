@@ -4,11 +4,11 @@ import { Router } from 'express';
 // import { startOfHour, parseISO } from 'date-fns';
 import { parseISO } from 'date-fns';
 
+import { getCustomRepository } from 'typeorm';
+
 // import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import CreateAppointmentService from '../services/CreateAppointmentService';
-
-import { getCustomRepository } from 'typeorm';
 
 const appointmentsRouter = Router();
 
@@ -29,7 +29,7 @@ const appointmentsRouter = Router();
 // is redirect to the root route
 appointmentsRouter.post('/', async (request, response) => {
   try {
-    const { provider, date } = request.body;
+    const { providerId, date } = request.body;
 
     // Convert the provided date and fix it to only hours
     // This is part of the 'Regra de Negocio'. Splitting parseISO from startOfHour
@@ -58,7 +58,7 @@ appointmentsRouter.post('/', async (request, response) => {
 
     const appointment = await createAppointment.execute({
       date: parsedDate,
-      provider,
+      providerId,
     });
 
     return response.json(appointment);
@@ -70,7 +70,7 @@ appointmentsRouter.post('/', async (request, response) => {
 appointmentsRouter.get('/', async (request, response) => {
   const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
-  //const appointments = appointmentsRepository.all();
+  // const appointments = appointmentsRepository.all();
   const appointments = await appointmentsRepository.find();
 
   return response.json(appointments);

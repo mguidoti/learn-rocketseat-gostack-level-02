@@ -6,32 +6,31 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
 
 import User from './User';
 
 @Entity('appointments')
 class Appointment {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  provider_id: string;
+  providerId: string;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'provider_id' })
+  @JoinColumn({ name: 'providerId' })
   provider: User;
 
   @Column('timestamp with time zone')
   date: Date;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   // constructor({ provider, date }: Omit<Appointment, 'id'>) {
   //   this.id = uuid();
