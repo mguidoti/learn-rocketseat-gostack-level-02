@@ -10,7 +10,13 @@ import { getCustomRepository } from 'typeorm';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import CreateAppointmentService from '../services/CreateAppointmentService';
 
+import ensureAuthenticated from '../middlewares/ensureAuthenticated'
+
 const appointmentsRouter = Router();
+
+// This means that it will use the middleware for all of the routes in this file.
+// We can pass this for routes individually too.
+appointmentsRouter.use(ensureAuthenticated);
 
 // const appointmentsRepository = new AppointmentsRepository();
 
