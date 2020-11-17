@@ -10,7 +10,7 @@ import { getCustomRepository } from 'typeorm';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import CreateAppointmentService from '../services/CreateAppointmentService';
 
-import ensureAuthenticated from '../middlewares/ensureAuthenticated'
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const appointmentsRouter = Router();
 
@@ -34,43 +34,43 @@ appointmentsRouter.use(ensureAuthenticated);
 // Router() object here. Here, because the route is just /appointments, it
 // is redirect to the root route
 appointmentsRouter.post('/', async (request, response) => {
-  try {
-    const { providerId, date } = request.body;
+  // try {
+  const { providerId, date } = request.body;
 
-    // Convert the provided date and fix it to only hours
-    // This is part of the 'Regra de Negocio'. Splitting parseISO from startOfHour
-    // is, therefore, necessary to have the services right
-    // const parsedDate = startOfHour(parse(date));
-    const parsedDate = parseISO(date);
+  // Convert the provided date and fix it to only hours
+  // This is part of the 'Regra de Negocio'. Splitting parseISO from startOfHour
+  // is, therefore, necessary to have the services right
+  // const parsedDate = startOfHour(parse(date));
+  const parsedDate = parseISO(date);
 
-    const createAppointment = new CreateAppointmentService();
+  const createAppointment = new CreateAppointmentService();
 
-    // const appointmentDate = startOfHour(parsedDate);
+  // const appointmentDate = startOfHour(parsedDate);
 
-    // const findAppointmentInSameDate = appointmentsRepository.findByDate(
-    //   parsedDate,
-    // );
+  // const findAppointmentInSameDate = appointmentsRepository.findByDate(
+  //   parsedDate,
+  // );
 
-    // if (findAppointmentInSameDate) {
-    //   return response
-    //     .status(400)
-    //     .json({ message: 'This appointment is already booked' });
-    // }
+  // if (findAppointmentInSameDate) {
+  //   return response
+  //     .status(400)
+  //     .json({ message: 'This appointment is already booked' });
+  // }
 
-    // const appointment = appointmentsRepository.create({
-    //   provider,
-    //   date: parsedDate,
-    // });
+  // const appointment = appointmentsRepository.create({
+  //   provider,
+  //   date: parsedDate,
+  // });
 
-    const appointment = await createAppointment.execute({
-      date: parsedDate,
-      providerId,
-    });
+  const appointment = await createAppointment.execute({
+    date: parsedDate,
+    providerId,
+  });
 
-    return response.json(appointment);
-  } catch (err) {
-    return response.status(400).json({ message: err.message });
-  }
+  return response.json(appointment);
+  // } catch (err) {
+  //   return response.status(400).json({ message: err.message });
+  // }
 });
 
 appointmentsRouter.get('/', async (request, response) => {
